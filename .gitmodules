@@ -1,0 +1,3 @@
+[submodule "pp-web-diary"]
+	path = pp-web-diary
+	url = https://gitlab.tfv.jp/tokyo-u/pp-web-diary.git

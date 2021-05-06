@@ -1,0 +1,68 @@
+version: '3'
+services:
+## 以下，https://qiita.com/chisaki0606/items/a4b42af5c4735c94057a を参考に編集・記述
+## ネットワークを形成
+## https://qiita.com/takuyanagai0213/items/67390fa2438b5fa62296
+  web:
+    container_name: web
+    build: .
+    command: /bin/sh
+    volumes:
+      - ./apps:/apps
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    tty: true
+    networks:
+      - WebToPsql
+      
+  postgres:
+    image: postgres:12.5-alpine
+    container_name: postgres12.5-pp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgsql-pp-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
+      - POSTGRES_DB=pp091
+      - POSTGRES_USER=pp_user
+      - POSTGRES_PASSWORD=pp_user
+    restart: always
+    networks:
+      - WebToPsql
+
+networks:
+  WebToPsql:
+    driver: bridge
+
+volumes:
+  pgsql-pp-data:
+    external: true
+# このオプションを true に設定したら、Compose の外にあるボリュームを作成します
+#（訳者注：Compose が管理していない Docker ボリュームを利用します、という意味）。
+# docker-compose up を実行してもボリュームを作成しません。もしボリュームが存在していなければ、エラーを返します。
+
+
+## 以下，書籍で紹介されたサンプルデータからgit cloneしてとってきたdocker-compose.ymlの情報
+#  db:
+#    image: postgres:11.2-alpine
+#    volumes:
+#      - ./tmp/db:/var/lib/postgresql/data
+#  web:
+#    build: .
+#    command: /bin/sh
+#    environment:
+#      WEBPACKER_DEV_SERVER_HOST: "0.0.0.0"
+#      RAILS_SERVE_STATIC_FILES: "1"
+#      EDITOR: "vim"
+#    volumes:
+#      - ./apps:/apps
+#    ports:
+#      - "3000:3000"
+#      - "3035:3035"
+#    depends_on:
+#      - postgres
+#    tty: true
+
